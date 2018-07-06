@@ -32753,7 +32753,7 @@ class TableCellBorders extends xml_components_1.XmlComponent {
         return this;
     }
     addStartBorder(style, size, color) {
-        const start = new BaseTableCellBorder("w:start");
+        const start = new BaseTableCellBorder("w:left");
         start.setProperties(style, size, color);
         this.root.push(start);
         return this;
@@ -32765,7 +32765,7 @@ class TableCellBorders extends xml_components_1.XmlComponent {
         return this;
     }
     addEndBorder(style, size, color) {
-        const end = new BaseTableCellBorder("w:end");
+        const end = new BaseTableCellBorder("w:right");
         end.setProperties(style, size, color);
         this.root.push(end);
         return this;

@@ -71,7 +71,7 @@ export class TableCellBorders extends XmlComponent {
     }
 
     public addStartBorder(style: BorderStyle, size: number, color: string): TableCellBorders {
-        const start = new BaseTableCellBorder("w:start");
+        const start = new BaseTableCellBorder("w:left");
         start.setProperties(style, size, color);
         this.root.push(start);
 
@@ -87,7 +87,7 @@ export class TableCellBorders extends XmlComponent {
     }
 
     public addEndBorder(style: BorderStyle, size: number, color: string): TableCellBorders {
-        const end = new BaseTableCellBorder("w:end");
+        const end = new BaseTableCellBorder("w:right");
         end.setProperties(style, size, color);
         this.root.push(end);
 
