@@ -1,7 +1,18 @@
 // http://officeopenxml.com/WPtext.php
 import { Break } from "./break";
 import { Caps, SmallCaps } from "./caps";
-import { Bold, Color, DoubleStrike, Italics, Size, Strike } from "./formatting";
+import {
+    Bold,
+    BoldComplexScript,
+    Color,
+    DoubleStrike,
+    Italics,
+    ItalicsComplexScript,
+    RightToLeft,
+    Size,
+    SizeComplexScript,
+    Strike,
+} from "./formatting";
 import { Begin, End, Page, Separate } from "./page-number";
 import { RunProperties } from "./properties";
 import { RunFonts } from "./run-fonts";
@@ -23,11 +34,13 @@ export class Run extends XmlComponent {
 
     public bold(): Run {
         this.properties.push(new Bold());
+        this.properties.push(new BoldComplexScript());
         return this;
     }
 
     public italic(): Run {
         this.properties.push(new Italics());
+        this.properties.push(new ItalicsComplexScript());
         return this;
     }
 
@@ -43,6 +56,12 @@ export class Run extends XmlComponent {
 
     public size(size: number): Run {
         this.properties.push(new Size(size));
+        this.properties.push(new SizeComplexScript(size));
+        return this;
+    }
+
+    public rightToLeft(): Run {
+        this.properties.push(new RightToLeft());
         return this;
     }
 
@@ -94,8 +113,8 @@ export class Run extends XmlComponent {
         return this;
     }
 
-    public font(fontName: string): Run {
-        this.properties.push(new RunFonts(fontName));
+    public font(fontName: string, hint?: string | undefined): Run {
+        this.properties.push(new RunFonts(fontName, hint));
         return this;
     }
 

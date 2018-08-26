@@ -1,16 +1,14 @@
-import { IMediaData } from "file/media";
 import { AppProperties } from "./app-properties/app-properties";
 import { ContentTypes } from "./content-types/content-types";
 import { CoreProperties, IPropertiesOptions } from "./core-properties";
 import { Document } from "./document";
-import { FooterReferenceType, HeaderReference, HeaderReferenceType } from "./document/body/section-properties";
-import { SectionPropertiesOptions } from "./document/body/section-properties/section-properties";
+import { FooterReferenceType, HeaderReference, HeaderReferenceType, SectionPropertiesOptions } from "./document/body/section-properties";
 import { FooterWrapper } from "./footer-wrapper";
 import { FootNotes } from "./footnotes";
 import { HeaderWrapper } from "./header-wrapper";
-import { Media } from "./media";
+import { Image, Media } from "./media";
 import { Numbering } from "./numbering";
-import { Hyperlink, Paragraph, PictureRun } from "./paragraph";
+import { Bookmark, Hyperlink, Paragraph } from "./paragraph";
 import { Relationships } from "./relationships";
 import { Styles } from "./styles";
 import { ExternalStylesFactory } from "./styles/external-styles-factory";
@@ -32,7 +30,7 @@ export class File {
     private readonly contentTypes: ContentTypes;
     private readonly appProperties: AppProperties;
 
-    private nextId: number = 1;
+    private currentRelationshipId: number = 1;
 
     constructor(options?: IPropertiesOptions, sectionPropertiesOptions?: SectionPropertiesOptions) {
         if (!options) {
@@ -55,19 +53,19 @@ export class File {
         this.numbering = new Numbering();
         this.docRelationships = new Relationships();
         this.docRelationships.createRelationship(
-            this.nextId++,
+            this.currentRelationshipId++,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",
             "styles.xml",
         );
         this.docRelationships.createRelationship(
-            this.nextId++,
+            this.currentRelationshipId++,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering",
             "numbering.xml",
         );
         this.contentTypes = new ContentTypes();
 
         this.docRelationships.createRelationship(
-            this.nextId++,
+            this.currentRelationshipId++,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes",
             "footnotes.xml",
         );
@@ -99,12 +97,12 @@ export class File {
             sectionPropertiesOptions = {
                 footerType: FooterReferenceType.DEFAULT,
                 headerType: HeaderReferenceType.DEFAULT,
-                headerId: header.Header.referenceId,
-                footerId: footer.Footer.referenceId,
+                headerId: header.Header.ReferenceId,
+                footerId: footer.Footer.ReferenceId,
             };
         } else {
-            sectionPropertiesOptions.headerId = header.Header.referenceId;
-            sectionPropertiesOptions.footerId = footer.Footer.referenceId;
+            sectionPropertiesOptions.headerId = header.Header.ReferenceId;
+            sectionPropertiesOptions.footerId = footer.Footer.ReferenceId;
         }
         this.document = new Document(sectionPropertiesOptions);
     }
@@ -125,24 +123,16 @@ export class File {
         return this.document.createTable(rows, cols);
     }
 
-    public createImage(image: string): PictureRun {
-        const mediaData = this.media.addMedia(image, this.nextId++);
-        this.docRelationships.createRelationship(
-            mediaData.referenceId,
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            `media/${mediaData.fileName}`,
-        );
-        return this.document.createDrawing(mediaData);
+    public addImage(image: Image): File {
+        this.document.addParagraph(image.Paragraph);
+        return this;
     }
 
-    public createImageData(imageName: string, data: Buffer, width?: number, height?: number): IMediaData {
-        const mediaData = this.media.addMediaWithData(imageName, data, this.nextId++, width, height);
-        this.docRelationships.createRelationship(
-            mediaData.referenceId,
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            `media/${mediaData.fileName}`,
-        );
-        return mediaData;
+    public createImage(buffer: Buffer | string | Uint8Array | ArrayBuffer, width?: number, height?: number): Image {
+        const image = Media.addImage(this, buffer, width, height);
+        this.document.addParagraph(image.Paragraph);
+
+        return image;
     }
 
     public createHyperlink(link: string, text?: string): Hyperlink {
@@ -157,6 +147,20 @@ export class File {
         return hyperlink;
     }
 
+    public createInternalHyperLink(anchor: string, text?: string): Hyperlink {
+        text = text === undefined ? anchor : text;
+        const hyperlink = new Hyperlink(text, this.docRelationships.RelationshipCount, anchor);
+        // NOTE: unlike File#createHyperlink(), since the link is to an internal bookmark
+        // we don't need to create a new relationship.
+        return hyperlink;
+    }
+
+    public createBookmark(name: string, text?: string): Bookmark {
+        text = text === undefined ? name : text;
+        const bookmark = new Bookmark(name, text, this.docRelationships.RelationshipCount);
+        return bookmark;
+    }
+
     public addSection(sectionPropertiesOptions: SectionPropertiesOptions): void {
         this.document.Body.addSection(sectionPropertiesOptions);
     }
@@ -165,14 +169,11 @@ export class File {
         this.footNotes.createFootNote(paragraph);
     }
 
-    /**
-     * Creates new header.
-     */
     public createHeader(): HeaderWrapper {
-        const header = new HeaderWrapper(this.media, this.nextId++);
+        const header = new HeaderWrapper(this.media, this.currentRelationshipId++);
         this.headerWrapper.push(header);
         this.docRelationships.createRelationship(
-            header.Header.referenceId,
+            header.Header.ReferenceId,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header",
             `header${this.headerWrapper.length}.xml`,
         );
@@ -180,14 +181,11 @@ export class File {
         return header;
     }
 
-    /**
-     * Creates new footer.
-     */
     public createFooter(): FooterWrapper {
-        const footer = new FooterWrapper(this.media, this.nextId++);
+        const footer = new FooterWrapper(this.media, this.currentRelationshipId++);
         this.footerWrapper.push(footer);
         this.docRelationships.createRelationship(
-            footer.Footer.referenceId,
+            footer.Footer.ReferenceId,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer",
             `footer${this.footerWrapper.length}.xml`,
         );
@@ -201,7 +199,7 @@ export class File {
         this.document.Body.DefaultSection.addChildElement(
             new HeaderReference({
                 headerType: HeaderReferenceType.FIRST,
-                headerId: headerWrapper.Header.referenceId,
+                headerId: headerWrapper.Header.ReferenceId,
             }),
         );
 
@@ -245,7 +243,7 @@ export class File {
     }
 
     public HeaderByRefNumber(refId: number): HeaderWrapper {
-        const entry = this.headerWrapper.find((h) => h.Header.referenceId === refId);
+        const entry = this.headerWrapper.find((h) => h.Header.ReferenceId === refId);
         if (entry) {
             return entry;
         }
@@ -261,7 +259,7 @@ export class File {
     }
 
     public FooterByRefNumber(refId: number): FooterWrapper {
-        const entry = this.footerWrapper.find((h) => h.Footer.referenceId === refId);
+        const entry = this.footerWrapper.find((h) => h.Footer.ReferenceId === refId);
         if (entry) {
             return entry;
         }

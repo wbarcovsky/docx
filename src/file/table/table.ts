@@ -1,8 +1,18 @@
-import { GridSpan, TableCellBorders, TableCellWidth, VAlign, VerticalAlign, VMerge, VMergeType, WidthType } from "file/table/table-cell";
+import {
+    GridSpan,
+    TableCellBorders,
+    TableCellShading,
+    TableCellWidth,
+    VAlign,
+    VerticalAlign,
+    VMerge,
+    VMergeType,
+    WidthType,
+} from "file/table/table-cell";
 import { IXmlableObject, XmlComponent } from "file/xml-components";
 import { Paragraph } from "../paragraph";
 import { TableGrid } from "./grid";
-import { TableProperties, WidthTypes } from "./properties";
+import { TableProperties } from "./properties";
 
 export class Table extends XmlComponent {
     private readonly properties: TableProperties;
@@ -57,14 +67,18 @@ export class Table extends XmlComponent {
         return this.getRow(row).getCell(col);
     }
 
-    public setWidth(type: WidthTypes, width: number | string): Table {
+    public setWidth(type: WidthType, width: number | string): Table {
         this.properties.setWidth(type, width);
         return this;
     }
 
-    public fixedWidthLayout(): Table {
-        this.properties.fixedWidthLayout();
+    public setFixedWidthLayout(): Table {
+        this.properties.setFixedWidthLayout();
         return this;
+    }
+
+    public get Properties(): TableProperties {
+        return this.properties;
     }
 }
 
@@ -80,6 +94,15 @@ export class TableRow extends XmlComponent {
 
     public getCell(ix: number): TableCell {
         return this.cells[ix];
+    }
+
+    public addGridSpan(ix: number, cellSpan: number): TableCell {
+        const remainCell = this.cells[ix];
+        remainCell.CellProperties.addGridSpan(cellSpan);
+        this.cells.splice(ix + 1, cellSpan - 1);
+        this.root.splice(ix + 2, cellSpan - 1);
+
+        return remainCell;
     }
 }
 
@@ -119,20 +142,21 @@ export class TableCell extends XmlComponent {
         return para;
     }
 
-    get cellProperties(): TableCellProperties {
+    public get CellProperties(): TableCellProperties {
         return this.properties;
     }
 }
 
 export class TableCellProperties extends XmlComponent {
-    private cellBorder: TableCellBorders;
+    private readonly cellBorder: TableCellBorders;
+
     constructor() {
         super("w:tcPr");
         this.cellBorder = new TableCellBorders();
         this.root.push(this.cellBorder);
     }
 
-    get borders(): TableCellBorders {
+    public get Borders(): TableCellBorders {
         return this.cellBorder;
     }
 
@@ -148,14 +172,20 @@ export class TableCellProperties extends XmlComponent {
         return this;
     }
 
-    public setVerticalAlign(vAlignType: VerticalAlign): TableCellProperties {
-        this.root.push(new VAlign(vAlignType));
+    public setVerticalAlign(type: VerticalAlign): TableCellProperties {
+        this.root.push(new VAlign(type));
 
         return this;
     }
 
     public setWidth(width: string | number, type: WidthType): TableCellProperties {
         this.root.push(new TableCellWidth(width, type));
+
+        return this;
+    }
+
+    public setShading(attrs: object): TableCellProperties {
+        this.root.push(new TableCellShading(attrs));
 
         return this;
     }
