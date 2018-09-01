@@ -1,16 +1,22 @@
-import { IMediaData } from "../../file/media";
+import { Image } from "../../file/media";
 import { Num } from "../../file/numbering/num";
 import { XmlComponent } from "../../file/xml-components";
+import { Border } from "./formatting/border";
+import { IIndentAttributesProperties } from "./formatting/indent";
 import { ISpacingProperties } from "./formatting/spacing";
-import { Hyperlink } from "./links";
+import { Bookmark, Hyperlink } from "./links";
+import { ParagraphProperties } from "./properties";
 import { PictureRun, Run, TextRun } from "./run";
 export declare class Paragraph extends XmlComponent {
-    private properties;
+    private readonly properties;
     constructor(text?: string);
+    readonly Borders: Border;
+    createBorder(): Paragraph;
     addRun(run: Run): Paragraph;
     addHyperLink(hyperlink: Hyperlink): Paragraph;
+    addBookmark(bookmark: Bookmark): Paragraph;
     createTextRun(text: string): TextRun;
-    createPictureRun(imageData: IMediaData): PictureRun;
+    addImage(image: Image): PictureRun;
     heading1(): Paragraph;
     heading2(): Paragraph;
     heading3(): Paragraph;
@@ -21,6 +27,9 @@ export declare class Paragraph extends XmlComponent {
     center(): Paragraph;
     left(): Paragraph;
     right(): Paragraph;
+    start(): Paragraph;
+    end(): Paragraph;
+    distribute(): Paragraph;
     justified(): Paragraph;
     thematicBreak(): Paragraph;
     pageBreak(): Paragraph;
@@ -33,10 +42,12 @@ export declare class Paragraph extends XmlComponent {
     setNumbering(numbering: Num, indentLevel: number): Paragraph;
     setCustomNumbering(numberId: number, indentLevel: number): Paragraph;
     style(styleId: string): Paragraph;
-    indent(attrs: object): Paragraph;
+    indent(attrs: IIndentAttributesProperties): Paragraph;
     spacing(params: ISpacingProperties): Paragraph;
     keepNext(): Paragraph;
     keepLines(): Paragraph;
     referenceFootnote(id: number): Paragraph;
     addRunToFront(run: Run): Paragraph;
+    bidirectional(): Paragraph;
+    readonly Properties: ParagraphProperties;
 }

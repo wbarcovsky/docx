@@ -1,4 +1,9 @@
-export interface IPacker {
-    pack(path: string): void;
+/// <reference types="node" />
+import { File } from "../../file";
+export declare class Packer {
+    private readonly compiler;
+    constructor();
+    toBuffer(file: File): Promise<Buffer>;
+    toBase64String(file: File): Promise<string>;
+    toBlob(file: File): Promise<Blob>;
 }
-export declare const WORKAROUND = "";

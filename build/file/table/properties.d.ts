@@ -1,8 +1,11 @@
 import { XmlComponent } from "../../file/xml-components";
-export declare type WidthTypes = "dxa" | "pct" | "nil" | "auto";
+import { WidthType } from "./table-cell";
+import { TableCellMargin } from "./table-cell-margin";
 export declare class TableProperties extends XmlComponent {
+    private readonly cellMargain;
     constructor();
-    setWidth(type: WidthTypes, w: number | string): TableProperties;
-    fixedWidthLayout(): TableProperties;
+    setWidth(type: WidthType, w: number | string): TableProperties;
+    setFixedWidthLayout(): TableProperties;
     setBorder(): TableProperties;
+    readonly CellMargin: TableCellMargin;
 }

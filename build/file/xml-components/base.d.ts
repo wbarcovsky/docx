@@ -4,5 +4,5 @@ export declare abstract class BaseXmlComponent {
     protected deleted: boolean;
     constructor(rootKey: string);
     abstract prepForXml(): IXmlableObject;
-    readonly isDeleted: boolean;
+    readonly IsDeleted: boolean;
 }

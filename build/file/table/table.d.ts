@@ -1,7 +1,7 @@
 import { TableCellBorders, VerticalAlign, VMergeType, WidthType } from "../../file/table/table-cell";
 import { IXmlableObject, XmlComponent } from "../../file/xml-components";
 import { Paragraph } from "../paragraph";
-import { WidthTypes } from "./properties";
+import { TableProperties } from "./properties";
 export declare class Table extends XmlComponent {
     private readonly properties;
     private readonly rows;
@@ -9,14 +9,16 @@ export declare class Table extends XmlComponent {
     constructor(rows: number, cols: number, colSizes?: number[]);
     getRow(ix: number): TableRow;
     getCell(row: number, col: number): TableCell;
-    setWidth(type: WidthTypes, width: number | string): Table;
-    fixedWidthLayout(): Table;
+    setWidth(type: WidthType, width: number | string): Table;
+    setFixedWidthLayout(): Table;
+    readonly Properties: TableProperties;
 }
 export declare class TableRow extends XmlComponent {
     private readonly cells;
     private readonly properties;
     constructor(cells: TableCell[]);
     getCell(ix: number): TableCell;
+    addGridSpan(ix: number, cellSpan: number): TableCell;
 }
 export declare class TableRowProperties extends XmlComponent {
     constructor();
@@ -27,14 +29,15 @@ export declare class TableCell extends XmlComponent {
     addContent(content: Paragraph | Table): TableCell;
     prepForXml(): IXmlableObject;
     createParagraph(text?: string): Paragraph;
-    readonly cellProperties: TableCellProperties;
+    readonly CellProperties: TableCellProperties;
 }
 export declare class TableCellProperties extends XmlComponent {
-    private cellBorder;
+    private readonly cellBorder;
     constructor();
-    readonly borders: TableCellBorders;
+    readonly Borders: TableCellBorders;
     addGridSpan(cellSpan: number): TableCellProperties;
     addVerticalMerge(type: VMergeType): TableCellProperties;
-    setVerticalAlign(vAlignType: VerticalAlign): TableCellProperties;
+    setVerticalAlign(type: VerticalAlign): TableCellProperties;
     setWidth(width: string | number, type: WidthType): TableCellProperties;
+    setShading(attrs: object): TableCellProperties;
 }

@@ -1,5 +1,4 @@
 /// <reference types="node" />
-import * as fs from "fs";
 export interface IMediaDataDimensions {
     pixels: {
         x: number;
@@ -12,7 +11,7 @@ export interface IMediaDataDimensions {
 }
 export interface IMediaData {
     referenceId: number;
-    stream: fs.ReadStream | Buffer;
+    stream: Buffer | Uint8Array | ArrayBuffer;
     path?: string;
     fileName: string;
     dimensions: IMediaDataDimensions;

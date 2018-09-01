@@ -1,17 +1,14 @@
-import { IMediaData } from "../../file/media";
 import { XmlComponent } from "../../file/xml-components";
-import { Paragraph, PictureRun } from "../paragraph";
+import { Paragraph } from "../paragraph";
 import { Table } from "../table";
 import { Body } from "./body";
-import { SectionPropertiesOptions } from "./body/section-properties/section-properties";
+import { SectionPropertiesOptions } from "./body/section-properties";
 export declare class Document extends XmlComponent {
     private readonly body;
     constructor(sectionPropertiesOptions?: SectionPropertiesOptions);
-    addParagraph(paragraph: Paragraph): void;
+    addParagraph(paragraph: Paragraph): Document;
     createParagraph(text?: string): Paragraph;
     addTable(table: Table): void;
     createTable(rows: number, cols: number): Table;
-    addDrawing(pictureParagraph: Paragraph): void;
-    createDrawing(imageData: IMediaData): PictureRun;
     readonly Body: Body;
 }

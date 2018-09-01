@@ -3,8 +3,8 @@ import { AbstractNumbering } from "./abstract-numbering";
 import { Num } from "./num";
 export declare class Numbering extends XmlComponent {
     private nextId;
-    private abstractNumbering;
-    private concreteNumbering;
+    private readonly abstractNumbering;
+    private readonly concreteNumbering;
     constructor();
     createAbstractNumbering(): AbstractNumbering;
     createConcreteNumbering(abstractNumbering: AbstractNumbering): Num;

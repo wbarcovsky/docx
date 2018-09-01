@@ -8,6 +8,7 @@ export declare class Run extends XmlComponent {
     underline(underlineType?: string, color?: string): Run;
     color(color: string): Run;
     size(size: number): Run;
+    rightToLeft(): Run;
     break(): Run;
     tab(): Run;
     pageNumber(): Run;
@@ -17,6 +18,6 @@ export declare class Run extends XmlComponent {
     doubleStrike(): Run;
     subScript(): Run;
     superScript(): Run;
-    font(fontName: string): Run;
+    font(fontName: string, hint?: string | undefined): Run;
     style(styleId: string): Run;
 }

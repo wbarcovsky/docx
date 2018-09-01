@@ -1,9 +1,15 @@
 import { XmlComponent } from "../../file/xml-components";
 import * as paragraph from "../paragraph/formatting";
+export declare enum LevelSuffix {
+    NOTHING = "nothing",
+    SPACE = "space",
+    TAB = "tab",
+}
 export declare class LevelBase extends XmlComponent {
     private readonly paragraphProperties;
     private readonly runProperties;
     constructor(level: number, start?: number, numberFormat?: string, levelText?: string, lvlJc?: string);
+    setSuffix(value: LevelSuffix): LevelBase;
     addParagraphProperty(property: XmlComponent): Level;
     addRunProperty(property: XmlComponent): Level;
     size(twips: number): Level;

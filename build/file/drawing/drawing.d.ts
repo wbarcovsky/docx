@@ -18,7 +18,7 @@ export interface IDrawingOptions {
     floating?: IFloating;
 }
 export declare class Drawing extends XmlComponent {
-    private inline;
+    private readonly inline;
     constructor(imageData: IMediaData, drawingOptions?: IDrawingOptions);
     scale(factorX: number, factorY: number): void;
 }

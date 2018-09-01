@@ -3,4 +3,4 @@ export interface IXmlableObject extends Object {
         [key: string]: string | number | boolean;
     };
 }
-export declare const WORKAROUND3 = "workaround";
+export declare const WORKAROUND3 = "";

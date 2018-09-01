@@ -9,5 +9,5 @@ export declare class LevelOverride extends XmlComponent {
     private readonly levelNum;
     private lvl?;
     constructor(levelNum: number, start?: number);
-    readonly level: LevelForOverride;
+    readonly Level: LevelForOverride;
 }

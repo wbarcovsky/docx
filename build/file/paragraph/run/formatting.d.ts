@@ -5,7 +5,13 @@ export { RunFonts } from "./run-fonts";
 export declare class Bold extends XmlComponent {
     constructor();
 }
+export declare class BoldComplexScript extends XmlComponent {
+    constructor();
+}
 export declare class Italics extends XmlComponent {
+    constructor();
+}
+export declare class ItalicsComplexScript extends XmlComponent {
     constructor();
 }
 export declare class Caps extends XmlComponent {
@@ -34,4 +40,10 @@ export declare class Strike extends XmlComponent {
 }
 export declare class Size extends XmlComponent {
     constructor(size: number);
+}
+export declare class SizeComplexScript extends XmlComponent {
+    constructor(size: number);
+}
+export declare class RightToLeft extends XmlComponent {
+    constructor();
 }
